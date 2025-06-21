@@ -1,0 +1,9 @@
+:8000 {
+	root * public
+	
+	# Handle PHP files
+	php_fastcgi unix//tmp/php-fpm.sock
+	
+	# Serve static files
+	file_server
+}
