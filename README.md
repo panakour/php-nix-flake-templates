@@ -29,13 +29,13 @@ Once you've initialized a template:
 4. **Stop services**: `pkill -f 'php-fpm|caddy'`
 
 
-### Legacy composer 1
-By default, the template uses the latest composer. If you need to use legacy Composer version 1 for compatibility with older projects, you can modify the `buildInputs` in your `flake.nix`:
+#### Legacy composer 1
+By default, the template uses the latest composer. If you need to use legacy composer version 1 for compatibility with older projects, you can modify the `buildInputs` in your `flake.nix`:
 
 ```nix
 buildInputs = [
   php
-  php.packages.composer-1  # Use Composer 1 instead
+  php.packages.composer-1  # Use composer 1 instead
   pkgs.caddy
 ];
 ```
