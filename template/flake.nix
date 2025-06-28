@@ -19,11 +19,11 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
         phps = nix-phps.packages.${system};
-        
+
         # 🔧 Change this to switch PHP versions
         # See available versions at: https://github.com/fossar/nix-phps
         phpVersion = "84";
-        
+
         php = phps."php${phpVersion}".buildEnv {
           extensions = (
             { enabled, all }:
@@ -62,7 +62,7 @@
         devShells.default = pkgs.mkShell {
           buildInputs = [
             php
-            pkgs."php${phpVersion}Packages".composer
+            php.packages.composer
             pkgs.caddy
           ];
 
