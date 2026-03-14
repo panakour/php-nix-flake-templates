@@ -23,7 +23,7 @@ Modern setup using [FrankenPHP](https://frankenphp.dev) - a PHP app server built
 After initializing either template, choose your PHP version by editing `flake.nix`:
 
 ```nix
-phpVersion = "85";  # Change to your desired version
+phpVersion = "84";  # Change to your desired version
 ```
 
 Then enter the development environment:
@@ -58,7 +58,7 @@ nix develop
 3. **Visit your site**: http://localhost:8000
 4. **Stop services**: `pkill -f frankenphp`
 
-> **Note**: FrankenPHP embeds its own PHP runtime for serving requests. The CLI PHP (used by Composer and scripts) is provided separately via nix-phps.
+> **Note**: FrankenPHP is built against the same PHP version and extensions from nix-phps, so the server and CLI use the same PHP. The first `nix develop` may take longer as FrankenPHP is compiled from source with your chosen PHP.
 
 
 #### Legacy composer 1

@@ -20,23 +20,22 @@
         pkgs = nixpkgs.legacyPackages.${system};
         phps = nix-phps.packages.${system};
 
-        # CLI PHP version for Composer and scripts
+        # Change this to switch PHP versions
         # See available versions at: https://github.com/fossar/nix-phps
         phpVersion = "85";
 
-        # CLI PHP with extensions and development configuration
-        # This is used for Composer, artisan, and other CLI tools.
-        # FrankenPHP uses its own embedded PHP for serving requests.
-        php = phps."php${phpVersion}".buildEnv {
-          extensions = (
-            { enabled, all }:
-            enabled
-            ++ (with all; [
-              xdebug
-              redis
-            ])
-          );
+        # PHP with extra extensions for both CLI and FrankenPHP server
+        phpWithExtensions = phps."php${phpVersion}".withExtensions (
+          { enabled, all }:
+          enabled
+          ++ (with all; [
+            xdebug
+            redis
+          ])
+        );
 
+        # CLI PHP environment with development configuration
+        php = phpWithExtensions.buildEnv {
           extraConfig = ''
             log_errors = On
             error_log = /tmp/php_errors.log
@@ -60,25 +59,28 @@
           '';
         };
 
+        # FrankenPHP built against the same PHP version with the same extensions
+        # This ensures the server uses the exact same PHP as the CLI
+        frankenphp = pkgs.frankenphp.override {
+          php = phpWithExtensions;
+        };
+
       in
       {
         devShells.default = pkgs.mkShell {
           buildInputs = [
             php
             php.packages.composer
-            pkgs.frankenphp
+            frankenphp
           ];
 
           shellHook = ''
-            echo "CLI PHP version: $(php --version | head -n 1)"
+            echo "PHP version: $(php --version | head -n 1)"
             echo "FrankenPHP version: $(frankenphp version 2>&1 | head -n 1)"
             echo ""
             echo "Start server:"
             echo "  FrankenPHP:  ./nix/start-frankenphp.sh"
             echo "  Stop:        pkill -f frankenphp"
-            echo ""
-            echo "Note: FrankenPHP uses its own embedded PHP for serving."
-            echo "      CLI PHP (composer, scripts) uses the nix-phps version above."
           '';
         };
       }
