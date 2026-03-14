@@ -1,0 +1,21 @@
+{
+	# Development: disable HTTPS
+	auto_https off
+
+	frankenphp {
+		# PHP ini overrides for the embedded PHP
+		php_ini display_errors On
+		php_ini error_reporting E_ALL
+		php_ini memory_limit 8192M
+		php_ini max_execution_time 0
+		php_ini upload_max_filesize 400M
+		php_ini post_max_size 600M
+	}
+}
+
+:8000 {
+	root * public
+
+	# Serve PHP via FrankenPHP (no separate PHP-FPM needed)
+	php_server
+}

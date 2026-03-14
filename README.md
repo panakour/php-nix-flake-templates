@@ -1,18 +1,40 @@
 # PHP Nix Flake Templates
 
+## Available Templates
+
+### Default (Caddy + PHP-FPM)
+
 ```bash
-# Create a new PHP project
 nix flake init --template github:panakour/php-nix-flake-templates
+```
 
-# Choose your PHP version by editing flake.nix:
-# phpVersion = "84";  # Change to your desired version
+Traditional setup using Caddy as a reverse proxy to PHP-FPM. Supports all PHP versions from [nix-phps](https://github.com/fossar/nix-phps).
 
-# Enter the development environment
+### FrankenPHP
+
+```bash
+nix flake init --template github:panakour/php-nix-flake-templates#frankenphp
+```
+
+Modern setup using [FrankenPHP](https://frankenphp.dev) - a PHP app server built on Caddy with PHP embedded directly. No separate PHP-FPM process needed.
+
+---
+
+After initializing either template, choose your PHP version by editing `flake.nix`:
+
+```nix
+phpVersion = "85";  # Change to your desired version
+```
+
+Then enter the development environment:
+
+```bash
 nix develop
 ```
 
 
-## ✨ Features
+## Features
+
 - **All PHP versions** supported by [nix-phps](https://github.com/fossar/nix-phps) with easy switching
 - **Xdebug** pre-configured for debugging
 - **Composer** for dependency management
@@ -20,38 +42,48 @@ nix develop
 - **Cross-platform** (Linux, macOS, WSL)
 
 
-## 📖 Usage
-Once you've initialized a template:
+## Usage
+
+### Caddy template (default)
 
 1. **Enter the development environment**: `nix develop`
 2. **Start the Caddy server**: `./nix/start-caddy.sh`
 3. **Visit your site**: http://localhost:8000
 4. **Stop services**: `pkill -f 'php-fpm|caddy'`
 
+### FrankenPHP template
+
+1. **Enter the development environment**: `nix develop`
+2. **Start FrankenPHP**: `./nix/start-frankenphp.sh`
+3. **Visit your site**: http://localhost:8000
+4. **Stop services**: `pkill -f frankenphp`
+
+> **Note**: FrankenPHP embeds its own PHP runtime for serving requests. The CLI PHP (used by Composer and scripts) is provided separately via nix-phps.
+
 
 #### Legacy composer 1
-By default, the template uses the latest composer. If you need to use legacy composer version 1 for compatibility with older projects, you can modify the `buildInputs` in your `flake.nix`:
+By default, both templates use the latest Composer. If you need to use legacy Composer version 1 for compatibility with older projects, you can modify the `buildInputs` in your `flake.nix`:
 
 ```nix
 buildInputs = [
   php
   php.packages.composer-1  # Use composer 1 instead
-  pkgs.caddy
+  # ...
 ];
 ```
 
 Change `php.packages.composer` to `php.packages.composer-1` to use the legacy version.
 
 
-## 📋 Requirements
+## Requirements
 
 - [Nix](https://nixos.org/download.html) with flakes enabled
 - Optional: [direnv](https://direnv.net/) for automatic environment activation
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Feel free to submit issues and enhancement requests.
 
-## 📄 License
+## License
 
 MIT License - see LICENSE file for details.
